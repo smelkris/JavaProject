@@ -45,7 +45,7 @@ public class Airline extends AirlineAbstract {
 
     public static void main(String[] args) {
        Airline alaska = new Alaska("Alaska");
-       Airline american = new American("American");
+       Airline american = new American("Alaska2");
        Airline united = new United("United");
        
 
