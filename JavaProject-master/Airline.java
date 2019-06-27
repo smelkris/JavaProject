@@ -6,9 +6,12 @@ public class Airline extends AirlineAbstract {
     private static List<Airplane> __airplanes;
 
     private String flightNumber;
+    private String flightTime;
+    private Airplane airplane;
 
-    public Airline(String number) {
+    public Airline(String number, String time) {
         flightNumber = number;
+        flightTime = time;
     }
 
     private static void addToFlightList(Airline...airlines) {
@@ -25,7 +28,7 @@ public class Airline extends AirlineAbstract {
     private static void removeFromFlightList(String name) {
         int index = 0;
         for (Airline airline : Airline.__flightList) {
-            if (airline.getAirplaneName().equals(name)) {
+            if (airline.getFlightNumber().equals(name)) {
                 Airline.__flightList.remove(index);
                 return;
             }
@@ -33,23 +36,67 @@ public class Airline extends AirlineAbstract {
         }
     }
 
+    private static void addToAirplaneList(Airplane...airplanes) {
+        if (Airline.__airplanes == null) {
+            Airline.__airplanes = new ArrayList<Airplane>();
+        }
+        for (Airplane airplane : airplanes) {
+            if (!(Airline.__airplanes.contains(airplane))) {
+                Airline.__airplanes.add(airplane);
+            }
+        }
+    }
+
+    private static void removeAirplaneFromList(String name) {
+        int index = 0;
+        for (Airplane airplane : Airline.__airplanes) {
+            if (airplane.getAirplaneName().equals(name)) {
+                Airline.__airplanes.remove(index);
+                return;
+            }
+            index++;
+        }
+    }
+
+    private static List<Airline> matchFlightToAirplane() {
+        int flightIndex = 0;
+        for (Airline flight : Airline.__flightList) {
+            for (Airplane airplane : Airline.__airplanes) {
+                for (String flightTime : airplane.getFlightTimes()) {
+                    if (flight.getFlightTime().equals(flightTime)) {
+                        Airline.__flightList.get(flightIndex).flightTime = flightTime;
+                        Airline.__flightList.get(flightIndex).airplane = airplane;
+                        //remove flight time from airplane within Airline.__airplanes
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public static void printFlightList() {
         for (Airline airline : Airline.__flightList) {
-            System.out.print(airline.getAirplaneName()+" ");
+            System.out.print(airline.getFlightNumber()+" ");
         }
         System.out.println();
     }
 
-    public String getAirplaneName() {
+    public String getFlightNumber() {
         return flightNumber;
     }
 
+    public String getFlightTime() {
+        return flightTime;
+    }
+
+
+
     public static void main(String[] args) {
-       Airline alaska1 = new Alaska("1000");
-       Airline alaska2 = new Alaska("1001");
-       Airline alaska3 = new Alaska("1002");
-       Airline american1 = new American("1003");
-       Airline united1 = new United("1004");
+       Airline alaska1 = new Alaska("1000", "9:30-12:30");
+       Airline alaska2 = new Alaska("1001", "12:45-15:45");
+       Airline alaska3 = new Alaska("1002", "3:30-5:30");
+       Airline american1 = new American("1003", "16:45-17:45");
+       Airline united1 = new United("1004", "19:00-24:00");
        
        Airplane ap1 = new Airplane("Boeing737-1");
        Airplane ap2 = new Airplane("Boeing737-2");
@@ -74,7 +121,10 @@ public class Airline extends AirlineAbstract {
        //ap10.addFlightTimes("9:30-11:30", "12:45-15:45", "18:00-20:00");
 
        Airline.addToFlightList(alaska1, alaska2, alaska3, american1, united1);
+       Airline.addToAirplaneList(ap1, ap2, ap3, ap4, ap5, ap6, ap7);
         
+
+
         
       
 
@@ -84,22 +134,22 @@ public class Airline extends AirlineAbstract {
 
 class Alaska extends Airline {
     
-    public Alaska(String flightNumber) {
-        super(flightNumber);
+    public Alaska(String flightNumber, String flightTime) {
+        super(flightNumber, flightTime);
     }
 }
 
 class American extends Airline {
    
-    public American(String flightNumber) {
-        super(flightNumber);
+    public American(String flightNumber, String flightTime) {
+        super(flightNumber, flightTime);
     }
 }
 
 class United extends Airline {
  
-    public United(String flightNumber) {
-        super(flightNumber);
+    public United(String flightNumber, String flightTime) {
+        super(flightNumber, flightTime);
     }
 }
 
@@ -114,6 +164,10 @@ class Airplane {
 
     public String getAirplaneName() {
         return airplaneName;
+    }
+
+    public List<String> getFlightTimes() {
+        return flightTimes;
     }
 
     public void addFlightTimes(String...times) {
