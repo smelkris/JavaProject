@@ -8,10 +8,12 @@ public class Airline extends AirlineAbstract {
     private String flightNumber;
     private String flightTime;
     private Airplane airplane;
+    private boolean matchedStatus;
 
     public Airline(String number, String time) {
         flightNumber = number;
         flightTime = time;
+        matchedStatus = false;
     }
 
     private static void addToFlightList(Airline...airlines) {
@@ -60,18 +62,37 @@ public class Airline extends AirlineAbstract {
 
     private static List<Airline> matchFlightToAirplane() {
         int flightIndex = 0;
+        int airplaneIndex = 0;
+        int flightTimeIndex = 0;
+        List<Airline> unmatchedFlights = new ArrayList<Airline>();
+
         for (Airline flight : Airline.__flightList) {
+            airplaneIndex = 0;
             for (Airplane airplane : Airline.__airplanes) {
+                flightTimeIndex = 0;
                 for (String flightTime : airplane.getFlightTimes()) {
-                    if (flight.getFlightTime().equals(flightTime)) {
-                        Airline.__flightList.get(flightIndex).flightTime = flightTime;
-                        Airline.__flightList.get(flightIndex).airplane = airplane;
-                        //remove flight time from airplane within Airline.__airplanes
+                    if (flight.getFlightTime().equals(flightTime) && flight.matchedStatus == false) {
+                        Airline flightToUpdate = Airline.__flightList.get(flightIndex);
+                        flightToUpdate.flightTime = flightTime;
+                        flightToUpdate.airplane = airplane;
+                        Airline.__flightList.set(flightIndex, flightToUpdate);
+                        //Airline.__flightList.get(flightIndex).flightTime = flightTime;
+                        //Airline.__flightList.get(flightIndex).airplane = airplane;
+                        Airplane airplaneToUpdate =  Airline.__airplanes.get(airplaneIndex);
+                        airplaneToUpdate.removeFlightTime(flightTimeIndex);
+                        Airline.__airplanes.set(airplaneIndex, airplaneToUpdate);
+                        flight.matchedStatus = true;
                     }
+                    flightTimeIndex++;
                 }
+                airplaneIndex++;
             }
+            if (flight.matchedStatus == false) {
+                unmatchedFlights.add(flight);
+            }
+            flightIndex++;
         }
-        return null;
+        return unmatchedFlights;
     }
 
     public static void printFlightList() {
@@ -123,7 +144,14 @@ public class Airline extends AirlineAbstract {
        Airline.addToFlightList(alaska1, alaska2, alaska3, american1, united1);
        Airline.addToAirplaneList(ap1, ap2, ap3, ap4, ap5, ap6, ap7);
         
+       /*for (Airplane airplane : Airline.__airplanes) {
+           System.out.println(airplane.getFlightTimes());
+           for (String flightime : airplane.getFlightTimes()) {
+               System.out.println(flightime);
+           }
+       }*/
 
+       System.out.println(Airline.matchFlightToAirplane());
 
         
       
@@ -178,15 +206,8 @@ class Airplane {
         }
     }
 
-    public void removeFlightTime(String flightTime) {
-        int index = 0;
-        for (String time : flightTimes) {
-            if (time.equals(flightTime)) {
-                flightTimes.remove(index);
-                return;
-            }
-            index++;
-        }
+    public void removeFlightTime(int flightTimeIndex) {
+        flightTimes.set(flightTimeIndex, null);
     }
 
     public void displayFlightTimes() {
