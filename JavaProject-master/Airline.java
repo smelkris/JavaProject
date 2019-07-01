@@ -59,7 +59,8 @@ public class Airline extends AirlineAbstract {
             index++;
         }
     }
-
+    
+    //returns a list of flights that weren't matched with an airplane/flight time
     private static List<Airline> matchFlightToAirplane() {
         int flightIndex = 0;
         int airplaneIndex = 0;
@@ -110,6 +111,14 @@ public class Airline extends AirlineAbstract {
         return flightTime;
     }
 
+    public boolean getFlightStatus() {
+        return matchedStatus;
+    }
+
+    public Airplane getAirplane() {
+        return airplane;
+    }
+
 
 
     public static void main(String[] args) {
@@ -143,19 +152,14 @@ public class Airline extends AirlineAbstract {
 
        Airline.addToFlightList(alaska1, alaska2, alaska3, american1, united1);
        Airline.addToAirplaneList(ap1, ap2, ap3, ap4, ap5, ap6, ap7);
-        
-       /*for (Airplane airplane : Airline.__airplanes) {
-           System.out.println(airplane.getFlightTimes());
-           for (String flightime : airplane.getFlightTimes()) {
-               System.out.println(flightime);
-           }
-       }*/
 
-       System.out.println(Airline.matchFlightToAirplane());
-
-        
-      
-
+       //displays all the flights that weren't matched with an airplane or flight time
+       List<Airline> unmatchedFlights = Airline.matchFlightToAirplane();
+       for (Airline airline : unmatchedFlights) {
+           System.out.println(airline.getFlightNumber());
+           System.out.println(airline.getFlightTime());
+           System.out.println(airline.getFlightStatus());
+       }
     }
 }
 
